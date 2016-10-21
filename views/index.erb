@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>White Pages CallerId</title>
+    <script src="//media.twiliocdn.com/sdk/js/common/v0.1/twilio-common.min.js"></script>
+    <script type="text/javascript"
+      src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
+    <script type="text/javascript"
+      src="//media.twiliocdn.com/sdk/js/sync/v0.2/twilio-sync.min.js"></script>
+    <script type="text/javascript"
+      src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js">
+    </script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0/handlebars.min.js"></script>
+
+    <link href="css/client.css"
+      type="text/css" rel="stylesheet" />
+    <style>
+
+    </style>
+
+    <script type="text/javascript">
+
+    var globalConn; // Stores live connection
+    // Stores the Addon Data
+    var callerProfile = {
+      number: "",
+      name: "",
+      phonetype: "",
+      carrier: "",
+      address: "",
+      state: "",
+      city: "",
+      postal_code: "",
+    };
+    var data;
+    // Manages the state of our access token obtianed from the server
+    var accessManager;
+    // Our interface to the Sync Service
+    var syncClient;
+    // Using a sync doc for the synchronisation primitive, could use a list to
+    // keep the call log info.
+    var syncDoc;
+    // Get an access token for the client, passing a device ID, only one device ID
+    $.getJSON('/token', {
+      // Device ID is hardcoded in but can be auto generated with the below function
+      // getDeviceId.
+      device: 'test1234'
+    }, function(tokenResponse) {
+      // Initialize the Sync client
+      accessManager = new Twilio.AccessManager(tokenResponse.token);
+      syncClient = new Twilio.Sync.Client(accessManager);
+
+      // Create and/or open a Sync document
+      syncClient.document('TwilioChannel').then(function(doc) {
+        doc.on("updated", function(data) {
+          syncDoc = doc;
+          data = syncDoc.get();
+          buildCaller(callerProfile, data);
+        });
+      });
+    });
+
+    // Create the Client with a capability token.
+    Twilio.Device.setup("<%= token %>", {debug: false});
+
+    // Let us know when the client is ready.
+    Twilio.Device.ready(function (device) {
+      $("#log").text("Ready");
+    });
+
+    // Report an errors on the screen.
+    Twilio.Device.error(function (error) {
+      $("#log").text("Error: " + error.message);
+    });
+
+    // Estabilish a connection with the call.
+    Twilio.Device.connect(function (conn) {
+      $("#log").text("On call with: " + callerProfile.name);
+    });
+
+    // Message when a call disconnects
+    Twilio.Device.disconnect(function (conn) {
+      $("#log").text("Call ended");
+      $(".script-template-container").hide();
+
+    });
+
+    Twilio.Device.cancel(function (conn) {
+      $("#log").text("Call missed");
+      $(".script-template-container").hide();
+    });
+
+    // Listens for incoming connections
+    Twilio.Device.incoming(function (conn) {
+        // set the globalConn
+      globalConn = conn;
+      // Show the caller id info
+      $("#log").text("Call from: " + callerProfile.name);
+      showCaller(callerProfile);
+      // Add to call log
+      $("<li>", {id: conn.Id, text: callerProfile.name}).click(function () {
+        showCaller(callerProfile);
+      }).prependTo("#people");
+    });
+
+    function showCaller (data) {
+        var source   = $("#template").html();
+        var template = Handlebars.compile(source);
+        var context = data;
+        var html    = template(context);
+        $(".script-template-container").html(html);
+        $(".script-template-container").show();
+        $("#calllog").click( function() {
+            $(".script-template-container").hide();
+        });
+    }
+
+    function hideCaller () {
+        $(".script-template-container").hide();
+    }
+
+    function answer() {
+        // answer the call
+      globalConn.accept();
+    }
+
+    function hangup() {
+      Twilio.Device.disconnectAll();
+    }
+
+    function addcaller() {
+    }
+
+    //Generate random UUID to identify this browser tab
+    //For a more robust solution consider a library like
+    //fingerprintjs2: https://github.com/Valve/fingerprintjs2
+    // ****Currently not being used.****
+    function getDeviceId() {
+      return 'browser-' +
+        'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+          var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+          return v.toString(16);
+        });
+    }
+
+    // Parsing the JSON response into individual variables
+    function buildCaller(caller, data) {
+      caller.name = data.results.whitepages_pro_caller_id.result.results[0].belongs_to[0].names[0].first_name
+        + " " + data.results.whitepages_pro_caller_id.result.results[0].belongs_to[0].names[0].last_name;
+      caller.number = data.results.whitepages_pro_caller_id.result.results[0].phone_number;
+      caller.phonetype = data.results.whitepages_pro_caller_id.result.results[0].line_type;
+      caller.carrier = data.results.whitepages_pro_caller_id.result.results[0].carrier;
+      caller.address = data.results.whitepages_pro_caller_id.result.results[0].associated_locations[0].standard_address_line1
+        + " " + data.results.whitepages_pro_caller_id.result.results[0].associated_locations[0].standard_address_line2;
+      caller.state = data.results.whitepages_pro_caller_id.result.results[0].associated_locations[0].state_code;
+      caller.postal_code = data.results.whitepages_pro_caller_id.result.results[0].associated_locations[0].postal_code;
+      caller.city = data.results.whitepages_pro_caller_id.result.results[0].associated_locations[0].city;
+    }
+
+    </script>
+  </head>
+  <body>
+
+    <div class="logos">
+      <div id="twilio"><a href="https://www.twilio.com"><img src="images/twilio-logo-2100x650.png" width="175px"></img></a></div>
+      <h3>Now with Twilio Add-ons!</h3>
+      <div id="whitepages"><a href="http://pro.whitepages.com/developer/"><img src="//pro.whitepages.com/wp-content/uploads/2014/09/wp-logo-large.png" width="300px"></img></a></div>
+      <!--div id="addons"><img src="//pro.whitepages.com/wp-content/uploads/2014/09/wp-logo-large.png" width="300px"></img></a></div!-->
+
+    </div>
+    <%# The below line can be used to display your Twilio phone number %>
+    <!--div class="phone">For demo call: <%=caller_id%> <%# </div!-->
+
+    <button class="call" onclick="answer();">
+      Answer
+    </button>
+
+    <button class="hangup" onclick="hangup();">
+      Hangup
+    </button>
+
+    <div id="log">Starting up....</div>
+
+    <div class="script-template-container">     </div>
+
+    <script type="text/x-handlebars-template" id="template">
+      <div class='caller_profile'>
+        <div class="caller_profile_vcard vcard" style="background-image:url('//maps.googleapis.com/maps/api/staticmap?zoom=12&size=600x300&sensor=false&center={{address}},{{city}},{{state}}.png')">
+         <div class="caller_profile_text">
+           <p><label class="caller_profile_label">Number:</label>   <span class="fn editable" id="profile_edit_name">{{number}}</span></p>
+           <p><label class="caller_profile_label">Name:</label>   <span class="fn editable" id="profile_edit_name">{{name}}</span></p>
+           <p><label class="caller_profile_label">Phone:</label>   <span class="fn editable" id="profile_edit_name">{{phonetype}}</span></p>
+           <p><label class="caller_profile_label">Carrier:</label>   <span class="fn editable" id="profile_edit_name" >{{carrier}}</span></p>
+           <p><label class="caller_profile_label">Address:</label>   <span class="fn editable" id="profile_edit_name" >{{address}}</span></p>
+           <p><label class="caller_profile_label">City:</label>   <span class="fn editable" id="profile_edit_name">{{city}}</span></p>
+           <p><label class="caller_profile_label">State:</label>  <span class="fn editable" id="profile_edit_name">{{state}}</span></p>
+           <p><label class="caller_profile_label">Zip:</label>   <span class="fn editable" id="profile_edit_name">{{postal_code}}</span></p>
+         </div>
+        </div>
+      </div>
+      </script>
+
+    </script>
+    <div id="calllog" onclick="hideCaller();">
+      <title>Call Log</title>
+    </div>
+    <ul id="people"/>
+
+  </body>
+</html>
