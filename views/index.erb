@@ -173,7 +173,7 @@
     // Parsing the JSON response into individual variables
     function buildCaller(caller, data)
     {
-      if !(data.results.whitepages_pro_caller_id.result.results[0].belongs_to[0].name)
+      if (!(data.results.whitepages_pro_caller_id.result.results[0].belongs_to[0].name))
       {
         caller.name = data.results.whitepages_pro_caller_id.result.results[0].belongs_to[0].names[0].first_name
           + " " + data.results.whitepages_pro_caller_id.result.results[0].belongs_to[0].names[0].last_name;
