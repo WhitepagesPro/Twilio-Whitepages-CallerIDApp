@@ -1,4 +1,4 @@
-require_relative 'twilio-ruby/lib/twilio-ruby.rb'
+require 'twilio-ruby'
 require 'sinatra'
 require 'sinatra/json'
 require 'json'
@@ -8,20 +8,24 @@ disable :protection
 # put your default Twilio Client name here, for when a phone number isn't given
 default_client = "hales"
 # Add a Twilio phone number or number verified with Twilio as the caller ID
-caller_id   = ENV['twilio_caller_id']
-account_sid = ENV['twilio_account_sid']
-auth_token  = ENV['twilio_auth_token']
-appsid      = ENV['twilio_app_id']
-api_key     = ENV['twilio_api_key']
-api_secret  = ENV['twilio_api_secret']
-sync_sid    = ENV['twilio_sync_service_sid']
-wSpace_sid  = ENV['twilio_workspace_sid']
-wFlow_sid   = ENV['twilio_workflow_sid']
+caller_id   = '(844) 700-9029'#ENV['twilio_caller_id']
+account_sid = 'AC3568011c5b1ea77994ed50387219eb8e'#ENV['twilio_account_sid']
+auth_token  = '7e3416e57e8aa7437e8f192d8c822ee0'#ENV['twilio_auth_token']
+appsid      = 'APcb1860769148402be75b173806b777dd'#ENV['twilio_app_id']
+api_key     = 'SKa0c7ce2321b4e3467cb129a7eab38811'#ENV['twilio_api_key']
+api_secret  = 'ZIzHrvS6VRQpBw80RfabYXoYxT4SukUE'#ENV['twilio_api_secret']
+sync_sid    = 'IS29396a29519d9672cb5e6e008d33ba0a'#ENV['twilio_sync_service_sid']
+wSpace_sid  = 'WScb126ca61c237bd28dfd435a1ffc9666'#ENV['twilio_workspace_sid']
+wFlow_sid   = 'WWb84571203d4560d9deef6c54d6498c22'#ENV['twilio_workflow_sid']
+
+set :port, 8080
 
 client = Twilio::REST::TaskRouterClient.new account_sid, auth_token, wSpace_sid
 
 post '/assignment_callback' do
   # Responds to the assignment callbacks with
+  content_type :json
+  {}.to_json
 end
 
 get '/accept-reservation' do
