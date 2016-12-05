@@ -47,9 +47,10 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  bundler (~> 1.5)
   sinatra
   sinatra-contrib
-  twilio-ruby
+  twilio-ruby!
 
 BUNDLED WITH
-   1.13.6
+   1.12.5
