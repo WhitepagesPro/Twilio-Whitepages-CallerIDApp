@@ -1,7 +1,7 @@
 PATH
   remote: twilio-ruby
   specs:
-    twilio-ruby (~>4.11.1)
+    twilio-ruby (5.0.0.rc7)
       activesupport (~> 4.2)
       builder (>= 2.1.2)
       faraday (~> 0.9)
