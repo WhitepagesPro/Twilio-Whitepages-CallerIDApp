@@ -1,117 +1,40 @@
 twilio-ruby changelog
 =====================
 
-Version 4.13.0
---------------
-
-Released September 19, 2016:
-
-- Add VideoGrant.
-
-Version 4.12.1
---------------
-
-Released September 1, 2016:
-
-- Add VoiceGrant.
-
-Version 4.11.1
+Version 5.0.0-rc7
 -------------
 
-Released February 12, 2016:
+Release June 9, 2016
 
-- Add missing Keys mount to Account
+- Add messaging feedback support
 
-Version 4.11.0
+
+Version 5.0.0-rc5
 -------------
 
-Released January 28, 2016:
+Release May 31, 2016
 
-- Add support for alternative auth (eg. Keys)
+- Add preview.twilio.com/wireless support
 
-Version 4.10.0
+Version 5.0.0-rc4
 -------------
 
-Released January 28, 2016:
+Release March 28, 2016
 
-- Add support for filter_friendly_name in WorkflowConfig
-- Load reservations by default in TaskRouter
+- Add notifications.twilio.com subdomain
 
-Version 4.9.1
+Version 5.0.0
 -------------
 
-Release January 28, 2016
+Release January 29, 2016
 
-- Fix ip messaging first person grant
-
-Version 4.9.0
--------------
-
-Release December 17, 2015
-
-- Release ip messaging
-
-Version 4.8.0
--------------
-
-Release December 8, 2015
-
-- Make nbf optional
-
-Version 4.7.0
--------------
-
-Release December 3, 2015
-
-- Add access tokens
-
-Version 4.6.2
--------------
-
-Release November 19, 2015
-
-- Fix Pricing Messages
-
-Version 4.6.1
--------------
-
-Release November 10, 2015
-
-- Fix TrunkingClient references
-
-Version 4.6.0
--------------
-
-Release October 28, 2015
-
-- Add /Keys endpoint
-
-Version 4.4.0
--------------
-
-Release September 23, 2015
-
-- Add fetching a list of worker reservations
-- Add TaskRouter Workflow builder
-
-Version 4.3.0
--------------
-
-Release August 11, 2015
-
-- Add support for new Taskrouter JWT Functionality, JWTs now grant access to
-  - Workspace
-  - Worker
-  - TaskQueue
-
-Version 4.2.1
--------------
-
-Release June 19, 2015
-
-- Allow passing URL parameters through when getting statistics for TaskRouter objects
-- URI encode phone number lookups
-- Adds documentation for lookups
+- First class paging support
+- Streaming auto-paging functionality
+- Separation between strict paging and streaming, with network-efficient defaults
+- Fully configurable and swappable HTTP Client interfaces
+- Normalization of mounts -> endpoints relations, with first-class unified support for subdomains and multi-version support
+- Fixed URL pathing of subresources, preventing edge case errors with path building via mounting
+- Proper serialization/deserialization of types (integers, dates, etc.) 
 
 Version 4.2.0
 -------------
