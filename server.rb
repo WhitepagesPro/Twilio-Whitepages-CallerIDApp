@@ -1,6 +1,7 @@
 require_relative 'twilio-ruby/lib/twilio-ruby.rb'
 require 'sinatra'
 require 'sinatra/json'
+require 'json'
 
 disable :protection
 
@@ -15,8 +16,23 @@ api_key     = ENV['twilio_api_key']
 api_secret  = ENV['twilio_api_secret']
 sync_sid    = ENV['twilio_sync_service_sid']
 wSpace_sid  = ENV['twilio_workspace_sid']
+wFlow_sid   = ENV['twilio_workflow_sid']
 
-client = client = Twilio::REST::TaskRouterClient.new account_sid, auth_token, wSpace_sid
+client = Twilio::REST::TaskRouterClient.new account_sid, auth_token, wSpace_sid
+
+post '/assignment_callback' do
+  # Responds to the assignment callbacks with
+end
+
+get '/accept-reservation' do
+  # Accept a Reservation
+  task_sid = params[:task_sid]
+  reservation_sid = param[:reservation_sid]
+
+  reservation = client.workspace.tasks.get(task_sid).reservation.get(reservation_sid)
+  reservation.update(reservationStatus: 'accepted')
+  reservation.worker_name
+end
 
 get '/' do
     client_name = params[:client]
@@ -56,7 +72,8 @@ end
 post '/inbound' do
     from = params[:From]
     addOnData = params[:AddOns]
-    puts addOnData
+    task = client.workspace.task.create(workflow_sid: wFlow_sid, from: from)
+
     client = Twilio::REST::Client.new(account_sid, auth_token)
     # Sending the add on data through Twilio Sync
     service = client.preview.sync.services(sync_sid)
