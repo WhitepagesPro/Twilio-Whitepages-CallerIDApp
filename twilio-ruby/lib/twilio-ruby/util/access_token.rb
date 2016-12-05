@@ -26,7 +26,6 @@ module Twilio
         now = Time.now.to_i - 1
         headers = {
             'cty' => 'twilio-fpa;v=1',
-            'typ' => 'JWT'
         }
 
         grants = {}
@@ -101,36 +100,58 @@ module Twilio
 
       end
 
-      class SyncGrant
-        attr_accessor :service_sid,
-                      :endpoint_id,
-                      :deployment_role_sid,
-                      :push_credential_sid
+      class VoiceGrant
+        attr_accessor :outgoing_application_sid,
+                      :outgoing_application_params,
+                      :push_credential_sid,
+                      :endpoint_id
 
         def key
-          'data_sync'
+          'voice'
         end
 
         def payload
           payload = {}
-          if @service_sid
-            payload['service_sid'] = @service_sid
+
+          if outgoing_application_sid
+            outgoing = {}
+            outgoing[:application_sid] = outgoing_application_sid
+            if outgoing_application_params
+              outgoing[:params] = outgoing_application_params
+            end
+
+            payload[:outgoing] = outgoing
           end
-          if @endpoint_id
-            payload['endpoint_id'] = @endpoint_id
+
+          if push_credential_sid
+            payload[:push_credential_sid] = push_credential_sid
           end
-          if @deployment_role_sid
-            payload['deployment_role_sid'] = @deployment_role_sid
-          end
-          if @push_credential_sid
-            payload['push_credential_sid'] = @push_credential_sid
+
+          if endpoint_id
+            payload[:endpoint_id] = endpoint_id
           end
 
           payload
         end
-
       end
 
+      class VideoGrant
+        attr_accessor :configuration_profile_sid
+
+        def key
+          'video'
+        end
+
+        def payload
+          payload = {}
+
+          if configuration_profile_sid
+            payload[:configuration_profile_sid] = configuration_profile_sid
+          end
+
+          payload
+        end
+      end
 
     end
   end
