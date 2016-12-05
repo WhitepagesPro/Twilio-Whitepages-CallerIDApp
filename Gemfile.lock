@@ -1,3 +1,12 @@
+PATH
+  remote: twilio-ruby
+  specs:
+    twilio-ruby (5.0.0.rc7)
+      activesupport (~> 4.2)
+      builder (>= 2.1.2)
+      faraday (~> 0.9)
+      jwt (~> 1.0)
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -35,11 +44,6 @@ GEM
       tilt (>= 1.3, < 3)
     thread_safe (0.3.5)
     tilt (1.4.1)
-    twilio-ruby (5.0.0.rc7)
-      activesupport (~> 4.2)
-      builder (>= 2.1.2)
-      faraday (~> 0.9)
-      jwt (~> 1.0)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
 

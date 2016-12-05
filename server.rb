@@ -1,4 +1,4 @@
-require 'twilio-ruby'
+require_relative 'twilio-ruby/lib/twilio-ruby.rb'
 require 'sinatra'
 require 'sinatra/json'
 
