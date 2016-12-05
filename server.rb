@@ -15,13 +15,11 @@ api_key     = ENV['twilio_api_key']
 api_secret  = ENV['twilio_api_secret']
 sync_sid    = ENV['twilio_sync_service_sid']
 
-
 get '/' do
     client_name = params[:client]
     if client_name.nil?
         client_name = default_client
     end
-
     capability = Twilio::Util::Capability.new account_sid, auth_token
     # Create an application sid at twilio.com/user/account/apps and use it here/above
     capability.allow_client_outgoing appsid
@@ -46,7 +44,6 @@ get '/token' do
   grant.service_sid = sync_sid
   grant.endpoint_id = endpoint_id
   token.add_grant grant
-
   # Generate the token and send to the client
   json :identity => identity, :token => token.to_jwt
 end
@@ -54,13 +51,12 @@ end
 #this will be called from a Twilio voice URL
 #for inbound calls, dial the default_client
 post '/inbound' do
-
     from = params[:From]
     addOnData = params[:AddOns]
     client = Twilio::REST::Client.new(account_sid, auth_token)
     # Sending the add on data through Twilio Sync
     service = client.preview.sync.services(sync_sid)
-    response = service.documents("TwilioChannel").update(data: addOnData)
+    service.documents("TwilioChannel").update(data: addOnData)
     # Dials the default_client
     response2 = Twilio::TwiML::Response.new do |r|
         # Should be your Twilio Number or a verified Caller ID
