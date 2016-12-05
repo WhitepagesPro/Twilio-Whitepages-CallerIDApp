@@ -58,11 +58,11 @@ post '/inbound' do
     service = client.preview.sync.services(sync_sid)
     service.documents("TwilioChannel").update(data: addOnData)
     # Dials the default_client
-    response2 = Twilio::TwiML::Response.new do |r|
+    response = Twilio::TwiML::Response.new do |r|
         # Should be your Twilio Number or a verified Caller ID
         r.Dial :callerId => from do |d|
             d.Client default_client
         end
     end
-    response2.text
+    response.text
 end
