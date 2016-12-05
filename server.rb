@@ -53,6 +53,7 @@ end
 post '/inbound' do
     from = params[:From]
     addOnData = params[:AddOns]
+    puts addOnData
     client = Twilio::REST::Client.new(account_sid, auth_token)
     # Sending the add on data through Twilio Sync
     service = client.preview.sync.services(sync_sid)
