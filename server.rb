@@ -19,10 +19,6 @@ wFlow_sid   = ENV['twilio_workflow_sid']
 
 trClient = Twilio::REST::Client.new(account_sid, auth_token, wSpace_sid)
 
-post '.assignment_callback' do
-  
-end
-
 get '/' do
     client_name = params[:client]
     if client_name.nil?
@@ -75,4 +71,10 @@ post '/inbound' do
       #     d.Client default_client
       #  end
     end.text
+end
+
+post '/assignment_callback' do
+  {
+  "instruction":"dequeue"
+  }
 end
