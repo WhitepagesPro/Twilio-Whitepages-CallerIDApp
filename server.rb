@@ -14,6 +14,9 @@ appsid      = ENV['twilio_app_id']
 api_key     = ENV['twilio_api_key']
 api_secret  = ENV['twilio_api_secret']
 sync_sid    = ENV['twilio_sync_service_sid']
+wSpace_sid  = ENV['twilio_workspace_sid']
+
+trClient = Twilio::REST::TaskRouterClient.new(account_sid, auth_token, wSpace_sid)
 
 get '/' do
     client_name = params[:client]
