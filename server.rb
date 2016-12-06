@@ -15,7 +15,6 @@ api_key     = ENV['twilio_api_key']
 api_secret  = ENV['twilio_api_secret']
 sync_sid    = ENV['twilio_sync_service_sid']
 
-
 get '/' do
     client_name = params[:client]
     if client_name.nil?
@@ -80,13 +79,13 @@ post '/inbound' do
     client = Twilio::REST::Client.new(account_sid, auth_token)
     # Sending the add on data through Twilio Sync
     service = client.preview.sync.services(sync_sid)
-    response = service.documents("TwilioChannel").update(data: addOnData)
+    service.documents("TwilioChannel").update(data: addOnData)
     # Dials the default_client
-    response2 = Twilio::TwiML::Response.new do |r|
+    response = Twilio::TwiML::Response.new do |r|
         # Should be your Twilio Number or a verified Caller ID
         r.Dial :callerId => from do |d|
             d.Client default_client
         end
     end
-    response2.text
+    response.text
 end
