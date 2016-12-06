@@ -1,6 +1,6 @@
-require_relative 'twilio-ruby-sync/lib/twilio-ruby-sync.rb'
 require 'sinatra'
 require 'sinatra/json'
+require 'twilio-ruby'
 
 disable :protection
 
@@ -15,8 +15,6 @@ api_key     = ENV['twilio_api_key']
 api_secret  = ENV['twilio_api_secret']
 sync_sid    = ENV['twilio_sync_service_sid']
 wSpace_sid  = ENV['twilio_workspace_sid']
-
-trClient = Twilio::REST::Client.new(account_sid, auth_token, wSpace_sid)
 
 get '/' do
     client_name = params[:client]
@@ -48,7 +46,6 @@ get '/token' do
   grant.service_sid = sync_sid
   grant.endpoint_id = endpoint_id
   token.add_grant grant
-
   # Generate the token and send to the client
   json :identity => identity, :token => token.to_jwt
 end
@@ -56,7 +53,6 @@ end
 #this will be called from a Twilio voice URL
 #for inbound calls, dial the default_client
 post '/inbound' do
-
     from = params[:From]
     addOnData = params[:AddOns]
     client = Twilio::REST::Client.new(account_sid, auth_token)

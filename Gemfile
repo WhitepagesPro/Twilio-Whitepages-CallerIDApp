@@ -1,5 +1,4 @@
 source 'http://rubygems.org'
 gem 'sinatra'
 gem 'sinatra-contrib'
-gem 'twilio-ruby'
-gemspec :path => 'twilio-ruby-sync'
+gem 'twilio-ruby', '5.0.0.rc17'
