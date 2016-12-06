@@ -68,8 +68,8 @@ post '/inbound' do
         r.Enqueue :workflowSid => wFlow_sid
         # Should be your Twilio Number or a verified Caller ID
         r.Dial :callerId => from do |d|
-            d.Client default_client
+           d.Client default_client
         end
-    end
+    end.text
     response.text
 end
