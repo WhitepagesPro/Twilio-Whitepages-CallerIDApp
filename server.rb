@@ -21,21 +21,6 @@ wFlow_sid   = ENV['twilio_workflow_sid']
 
 trClient = Twilio::REST::TaskRouterClient.new(account_sid, auth_token, wSpace_sid)
 
-post '/assignment_callback' do
-  content_type :json
-  {"instruction": "accept"}.to_json
-end
-
-get '/accept_reservation' do
-  # Accept a Reservation
-  task_sid = params[:task_sid]
-  reservation_sid = params[:reservation_sid]
-
-  reservation = trClient.workspace.tasks.get(task_sid).reservation.get(reservation_sid)
-  reservation.update(reservationStatus: 'accepted')
-  reservation.worker_name
-end
-
 get '/' do
     client_name = params[:client]
     if client_name.nil?
