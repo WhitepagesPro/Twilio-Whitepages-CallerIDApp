@@ -31,7 +31,7 @@ get '/accept_reservation' do
   task_sid = params[:task_sid]
   reservation_sid = params[:reservation_sid]
 
-  reservation = trClient.workspace.tasks.get(task_sid).reservation.get(reservation_sid)
+  reservation = client.workspace.tasks.get(task_sid).reservation.get(reservation_sid)
   reservation.update(reservationStatus: 'accepted')
   reservation.worker_name
 end
