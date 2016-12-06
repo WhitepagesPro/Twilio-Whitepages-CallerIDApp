@@ -64,6 +64,7 @@ post '/inbound' do
     # Dials the default_client
     response = Twilio::TwiML::Response.new do |r|
         r.Say("Spam Beware, please wait for the next available agent ")
+        r.Enqueue :workflowSid => wFlow_sid
         # Should be your Twilio Number or a verified Caller ID
         r.Dial :callerId => from do |d|
             d.Client default_client
