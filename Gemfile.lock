@@ -36,7 +36,7 @@ PLATFORMS
 DEPENDENCIES
   sinatra
   sinatra-contrib
-  twilio-ruby (= 5.0.0.rc17)
+  twilio-ruby (~> 5.0.0.rc17)
 
 BUNDLED WITH
    1.13.6
