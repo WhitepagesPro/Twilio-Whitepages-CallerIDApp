@@ -1,7 +1,7 @@
 PATH
-  remote: twilio-ruby
+  remote: twilio-ruby-sync
   specs:
-    twilio-ruby (5.0.0.rc7)
+    twilio-ruby-sync (5.0.0.rc7)
       activesupport (~> 4.2)
       builder (>= 2.1.2)
       faraday (~> 0.9)
@@ -54,7 +54,7 @@ DEPENDENCIES
   bundler (~> 1.5)
   sinatra
   sinatra-contrib
-  twilio-ruby!
+  twilio-ruby-sync!
 
 BUNDLED WITH
    1.12.5

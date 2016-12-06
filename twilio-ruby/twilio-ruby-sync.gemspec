@@ -1,16 +1,16 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'twilio-ruby/version'
+require 'twilio-ruby-sync/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'twilio-ruby'
+  spec.name          = 'twilio-ruby-sync'
   spec.version       = Twilio::VERSION
   spec.authors       = ['Andrew Benton']
   spec.email         = ['andrew@twilio.com']
   spec.summary       = 'A simple library for communicating with the Twilio REST API, building TwiML, and generating Twilio Client Capability Tokens'
   spec.description   = 'A simple library for communicating with the Twilio REST API, building TwiML, and generating Twilio Client Capability Tokens'
-  spec.homepage      = 'http://github.com/twilio/twilio-ruby'
+  spec.homepage      = 'http://github.com/twilio/twilio-ruby-sync'
   spec.license       = 'MIT'
 
   spec.files         = `git ls-files -z`.split("\x0")
@@ -19,7 +19,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
   spec.required_ruby_version = '>= 1.9.3'
   spec.extra_rdoc_files = ['README.md', 'LICENSE.md']
-  spec.rdoc_options = ['--line-numbers', '--inline-source', '--title', 'twilio-ruby', '--main', 'README.md']
+  spec.rdoc_options = ['--line-numbers', '--inline-source', '--title', 'twilio-ruby-sync', '--main', 'README.md']
 
   spec.add_dependency('builder', '>= 2.1.2')
   spec.add_dependency('jwt', '~> 1.0')
@@ -31,5 +31,5 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency 'bundler', '~> 1.5'
   spec.extra_rdoc_files = ['README.md', 'LICENSE.md']
-  spec.rdoc_options = ['--line-numbers', '--inline-source', '--title', 'twilio-ruby', '--main', 'README.md']
+  spec.rdoc_options = ['--line-numbers', '--inline-source', '--title', 'twilio-ruby-sync', '--main', 'README.md']
 end

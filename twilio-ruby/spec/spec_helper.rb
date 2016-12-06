@@ -8,7 +8,7 @@ Dir.glob(File.expand_path("../support/**/*.rb", __FILE__), &method(:require))
 require_relative './holodeck/holodeck.rb'
 require_relative './holodeck/hologram.rb'
 
-require 'twilio-ruby'
+require 'twilio-ruby-sync'
 require 'rack'
 
 RSpec.configure do |config|

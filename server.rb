@@ -1,4 +1,4 @@
-require_relative 'twilio-ruby/lib/twilio-ruby.rb'
+require_relative 'twilio-ruby-sync/lib/twilio-ruby-sync.rb'
 require 'sinatra'
 require 'sinatra/json'
 
@@ -48,26 +48,6 @@ get '/token' do
 
   # Generate the token and send to the client
   json :identity => identity, :token => token.to_jwt
-end
-
-post '/dial' do
-    #determine if call is inbound
-    number = params[:PhoneNumber]
-
-    response = Twilio::TwiML::Response.new do |r|
-        # Should be your Twilio Number or a verified Caller ID
-        r.Dial :callerId => caller_id do |d|
-            # Test to see if the PhoneNumber is a number, or a Client ID. In
-            # this case, we detect a Client ID by the presence of non-numbers
-            # in the PhoneNumber parameter.
-            if /^[\d\+\-\(\) ]+$/.match(number)
-                d.Number(CGI::escapeHTML number)
-            else
-                d.Client number
-            end
-        end
-    end
-    response.text
 end
 
 #this will be called from a Twilio voice URL
