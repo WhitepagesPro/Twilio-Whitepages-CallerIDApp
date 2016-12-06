@@ -15,6 +15,7 @@ api_key     = ENV['twilio_api_key']
 api_secret  = ENV['twilio_api_secret']
 sync_sid    = ENV['twilio_sync_service_sid']
 wSpace_sid  = ENV['twilio_workspace_sid']
+wFlow_sid   = ENV['twilio_workflow_sid']
 
 trClient = Twilio::REST::Client.new(account_sid, auth_token, wSpace_sid)
 
