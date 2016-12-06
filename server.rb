@@ -20,7 +20,7 @@ wFlow_sid   = 'WWb84571203d4560d9deef6c54d6498c22'#ENV['twilio_workflow_sid']
 
 set :port, 8080
 
-client = Twilio::REST::TaskRouterClient.new account_sid, auth_token, wSpace_sid
+@client = Twilio::REST::Taskrouter.new wSpace_sid
 
 post '/assignment_callback' do
   # Responds to the assignment callbacks with
