@@ -1,8 +1,6 @@
 require_relative 'twilio-ruby-sync/lib/twilio-ruby-sync.rb'
 require 'sinatra'
 require 'sinatra/json'
-require 'twilio-ruby'
-require 'json'
 
 disable :protection
 
@@ -17,30 +15,15 @@ api_key     = ENV['twilio_api_key']
 api_secret  = ENV['twilio_api_secret']
 sync_sid    = ENV['twilio_sync_service_sid']
 wSpace_sid  = ENV['twilio_workspace_sid']
-wFlow_sid   = ENV['twilio_workflow_sid']
 
-trClient = Twilio::REST::TaskRouterClient.new(account_sid, auth_token, wSpace_sid)
-
-post '/assignment_callback' do
-  content_type :json
-  {"instruction": "accept"}.to_json
-end
-
-get '/accept_reservation' do
-  # Accept a Reservation
-  task_sid = params[:task_sid]
-  reservation_sid = params[:reservation_sid]
-
-  reservation = client.workspace.tasks.get(task_sid).reservation.get(reservation_sid)
-  reservation.update(reservationStatus: 'accepted')
-  reservation.worker_name
-end
+client = Twilio::REST::TaskRouterClient.new(account_sid, auth_token, wSpace_sid)
 
 get '/' do
     client_name = params[:client]
     if client_name.nil?
         client_name = default_client
     end
+
     capability = Twilio::Util::Capability.new account_sid, auth_token
     # Create an application sid at twilio.com/user/account/apps and use it here/above
     capability.allow_client_outgoing appsid
@@ -65,6 +48,7 @@ get '/token' do
   grant.service_sid = sync_sid
   grant.endpoint_id = endpoint_id
   token.add_grant grant
+
   # Generate the token and send to the client
   json :identity => identity, :token => token.to_jwt
 end
@@ -72,14 +56,9 @@ end
 #this will be called from a Twilio voice URL
 #for inbound calls, dial the default_client
 post '/inbound' do
+
     from = params[:From]
     addOnData = params[:AddOns]
-    puts addOnData
-    spamScore = results.whitepages_pro_phone_rep.result.results[0].reputation.level
-    puts spamScore
-    #if spamScore == 1
-    #  task = trClient.workspace.tasks.create(workflow_sid: wFlow_sid, attributes: '{"SPAM":"1"}')
-  #  trClient.
     client = Twilio::REST::Client.new(account_sid, auth_token)
     # Sending the add on data through Twilio Sync
     service = client.preview.sync.services(sync_sid)
