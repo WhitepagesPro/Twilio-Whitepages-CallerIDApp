@@ -1,6 +1,7 @@
 require_relative 'twilio-ruby-sync/lib/twilio-ruby-sync.rb'
 require 'sinatra'
 require 'sinatra/json'
+require 'twilio-ruby'
 
 disable :protection
 
