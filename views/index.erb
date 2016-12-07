@@ -52,26 +52,28 @@
       accessManager = new Twilio.AccessManager(tokenResponse.token);
       syncClient = new Twilio.Sync.Client(accessManager);
 
-      // Testing Doc Setup
-      syncClient.document('user_prefs').then(function(doc) {
-          doc.set({
-              foregroundColor: "#ffff00",
-              backgroundColor: "#ff0000"
-          });
-          console.log("executed doc set");
-          console.log(doc.get());
-      });
-
       // Create and/or open a Sync document
       syncClient.document('TwilioChannel').then(function(doc)
       {
         doc.set({
             syncDoc : doc,
-            data : {}
+            data : callerProfile
         });
         console.log(doc.get());
         //buildCaller(callerProfile, data)
       });
+
+      // Set listener for updates to Sync document
+      syncClient.document('TwilioChannel').then(function(doc)
+      {
+        doc.on("updated", function(data)
+        {
+          syncDoc = doc;
+          data = syncDoc.get();
+          buildCaller(callerProfile, data);
+        });
+      });
+
     });
 
     // Create the Client with a capability token.
@@ -114,15 +116,6 @@
         // set the globalConn
       globalConn = conn;
 
-      syncClient.document('TwilioChannel').then(function(doc)
-      {
-        doc.on("updated", function(data)
-        {
-          syncDoc = doc;
-          data = syncDoc.get();
-          buildCaller(callerProfile, data);
-        });
-      });
       // Show the caller id info
       $("#log").text("Call from: " + callerProfile.name);
       showCaller(callerProfile);

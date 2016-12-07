@@ -18,7 +18,7 @@ sync_sid    = ENV['twilio_sync_service_sid']
 wSpace_sid  = ENV['twilio_workspace_sid']
 wFlow_sid   = ENV['twilio_workflow_sid']
 
-client = Twilio::REST::Client.new account_sid, auth_token
+
 #trClient = Twilio::REST::Client.new(account_sid, auth_token, wSpace_sid)
 
 get '/' do
@@ -65,10 +65,11 @@ end
 post '/inbound' do
     from = params[:From]
     addOnData = params[:AddOns]
-
+    client = Twilio::REST::Client.new account_sid, auth_token
     # Sending the add on data through Twilio Sync
     service = client.preview.sync.services(sync_sid)
     service.documents("TwilioChannel").update(data: addOnData)
+    puts service
     # Dials the default_client
     Twilio::TwiML::Response.new do |r|
         r.Say("Spam Beware, please wait for the next available agent ")
