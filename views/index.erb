@@ -55,6 +55,17 @@
       // Create and/or open a Sync document
       syncClient.document('TwilioChannel').then(function(doc)
       {
+        doc.set({
+            syncDoc : doc,
+            data : callerProfile
+        });
+        console.log(doc.get());
+        //buildCaller(callerProfile, data)
+      });
+
+      // Set listener for updates to Sync document
+      syncClient.document('TwilioChannel').then(function(doc)
+      {
         doc.on("updated", function(data)
         {
           syncDoc = doc;
@@ -62,6 +73,7 @@
           buildCaller(callerProfile, data);
         });
       });
+
     });
 
     // Create the Client with a capability token.
@@ -104,15 +116,6 @@
         // set the globalConn
       globalConn = conn;
 
-      syncClient.document('TwilioChannel').then(function(doc)
-      {
-        doc.on("updated", function(data)
-        {
-          syncDoc = doc;
-          data = syncDoc.get();
-          buildCaller(callerProfile, data);
-        });
-      });
       // Show the caller id info
       $("#log").text("Call from: " + callerProfile.name);
       showCaller(callerProfile);
@@ -199,7 +202,7 @@
     <div class="logos">
       <div id="twilio"><a href="https://www.twilio.com"><img src="images/twilio-logo-2100x650.png" width="175px"></img></a></div>
       <h3>Now with Twilio Add-ons!</h3>
-	  <h3>(844) 700-9029</h3>
+	    <!-- <h3>(844) 700-9029</h3> -->
       <div id="whitepages"><a href="http://pro.whitepages.com/developer/"><img src="//pro.whitepages.com/wp-content/uploads/2014/09/wp-logo-large.png" width="300px"></img></a></div>
       <!--div id="addons"><img src="//pro.whitepages.com/wp-content/uploads/2014/09/wp-logo-large.png" width="300px"></img></a></div!-->
 
@@ -221,7 +224,7 @@
 
     <script type="text/x-handlebars-template" id="template">
       <div class='caller_profile'>
-        <div class="caller_profile_vcard vcard" style="background-image:url('//maps.googleapis.com/maps/api/staticmap?zoom=12&size=600x300&sensor=false&center={{address}},{{city}},{{state}}.png')">
+        <div class="caller_profile_vcard vcard" style="background-image:url('http://maps.googleapis.com/maps/api/staticmap?zoom=12&size=600x300&sensor=false&center={{address}},{{city}},{{state}}.png')">
          <div class="caller_profile_text">
            <p><label class="caller_profile_label">Number:</label>   <span class="fn editable" id="profile_edit_name">{{number}}</span></p>
            <p><label class="caller_profile_label">Name:</label>   <span class="fn editable" id="profile_edit_name">{{name}}</span></p>
