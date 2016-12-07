@@ -75,7 +75,7 @@ post '/inbound' do
 end
 
 post '/assignment_callback' do
-
+  puts "Hello World"
   content_type :json
   {"instruction" => "dequeue", "from" => "+15556667777", "post_work_activity_sid" => "WA0123401234..."}.to_json
 end
