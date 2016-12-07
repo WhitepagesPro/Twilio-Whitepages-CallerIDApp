@@ -52,9 +52,10 @@ PLATFORMS
 
 DEPENDENCIES
   bundler (~> 1.5)
+  json
   sinatra
   sinatra-contrib
   twilio-ruby!
 
 BUNDLED WITH
-   1.12.5
+   1.13.6

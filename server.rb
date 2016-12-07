@@ -1,7 +1,7 @@
 require 'sinatra'
 require 'sinatra/json'
 require 'twilio-ruby'
-require "json"
+require 'json'
 
 disable :protection
 
@@ -22,7 +22,6 @@ trClient = Twilio::REST::Client.new(account_sid, auth_token, wSpace_sid)
 
 post '/assignment_callback' do
   puts "Hello World"
-  
 end
 
 get '/' do
