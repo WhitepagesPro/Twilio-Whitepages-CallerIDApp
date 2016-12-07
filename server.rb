@@ -21,7 +21,8 @@ wFlow_sid   = ENV['twilio_workflow_sid']
 trClient = Twilio::REST::Client.new(account_sid, auth_token, wSpace_sid)
 
 post '/assignment_callback' do
-  puts "Hello World"
+  content_type :json
+  {"instruction": "dequeue"}.to_json
 end
 
 get '/' do
@@ -71,11 +72,11 @@ post '/inbound' do
     Twilio::TwiML::Response.new do |r|
       #  r.Say("Spam Beware, please wait for the next available agent ")
         r.Enqueue :workflowSid => wFlow_sid do |d|
-          d.Task
+          d.Task attributes
         # Should be your Twilio Number or a verified Caller ID
       #  r.Dial :callerId => from do |d|
       #     d.Client default_client
       #  end
-        end.text
-    end
+        end
+    end.text
 end
