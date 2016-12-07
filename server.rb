@@ -19,7 +19,6 @@ wSpace_sid  = ENV['twilio_workspace_sid']
 wFlow_sid   = ENV['twilio_workflow_sid']
 activ_sid   = ENV['twilio_activity_sid']
 
-
 #trClient = Twilio::REST::Client.new(account_sid, auth_token, wSpace_sid)
 
 get '/' do
