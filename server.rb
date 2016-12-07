@@ -18,12 +18,8 @@ sync_sid    = ENV['twilio_sync_service_sid']
 wSpace_sid  = ENV['twilio_workspace_sid']
 wFlow_sid   = ENV['twilio_workflow_sid']
 
-trClient = Twilio::REST::Client.new(account_sid, auth_token, wSpace_sid)
-
-post '/assignment_callback' do
-  content_type :json
-  {"instruction": "dequeue"}.to_json
-end
+client = Twilio::REST::Client.new(account_sid, auth_token)
+#trClient = Twilio::REST::Client.new(account_sid, auth_token, wSpace_sid)
 
 get '/' do
     client_name = params[:client]
@@ -64,19 +60,25 @@ end
 post '/inbound' do
     from = params[:From]
     addOnData = params[:AddOns]
-    client = Twilio::REST::Client.new(account_sid, auth_token)
+
     # Sending the add on data through Twilio Sync
     service = client.preview.sync.services(sync_sid)
     service.documents("TwilioChannel").update(data: addOnData)
     # Dials the default_client
     Twilio::TwiML::Response.new do |r|
-      #  r.Say("Spam Beware, please wait for the next available agent ")
-        r.Enqueue :workflowSid => wFlow_sid do |d|
-          d.Task attributes
+        r.Say("Spam Beware, please wait for the next available agent ")
+        # Queue task with TaskRouter
+        # r.Enqueue :workflowSid => wFlow_sid
         # Should be your Twilio Number or a verified Caller ID
-      #  r.Dial :callerId => from do |d|
-      #     d.Client default_client
-      #  end
-        end
+       r.Dial :callerId => from do |d|
+          d.Client default_client
+       end
     end.text
+end
+
+post '/assignment_callback' do
+  # Respond to assignment callbacks with accept instruction
+  content_type :json
+  # from must be a verified phone number from your twilio account
+  {"instruction" => "dequeue", "from" => caller_id, "post_work_activity_sid" => wFlow_sid}.to_json
 end
