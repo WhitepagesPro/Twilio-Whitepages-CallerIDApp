@@ -17,6 +17,7 @@ api_secret  = ENV['twilio_api_secret']
 sync_sid    = ENV['twilio_sync_service_sid']
 wSpace_sid  = ENV['twilio_workspace_sid']
 wFlow_sid   = ENV['twilio_workflow_sid']
+activ_sid   = ENV['twilio_activity_sid']
 
 
 #trClient = Twilio::REST::Client.new(account_sid, auth_token, wSpace_sid)
@@ -69,12 +70,11 @@ post '/inbound' do
     # Sending the add on data through Twilio Sync
     service = client.preview.sync.services(sync_sid)
     service.documents("TwilioChannel").update(data: addOnData)
-    puts service
     # Dials the default_client
     Twilio::TwiML::Response.new do |r|
         r.Say("Spam Beware, please wait for the next available agent ")
         # Queue task with TaskRouter
-        # r.Enqueue :workflowSid => wFlow_sid
+        r.Enqueue :workflowSid => wFlow_sid
         # Should be your Twilio Number or a verified Caller ID
        r.Dial :callerId => from do |d|
           d.Client default_client
@@ -86,5 +86,5 @@ post '/assignment_callback' do
   # Respond to assignment callbacks with accept instruction
   content_type :json
   # from must be a verified phone number from your twilio account
-  {"instruction" => "dequeue", "from" => caller_id, "post_work_activity_sid" => wFlow_sid}.to_json
+  {"instruction" => "dequeue", "from" => caller_id, "post_work_activity_sid" => activ_sid}.to_json
 end
