@@ -18,7 +18,7 @@ sync_sid    = ENV['twilio_sync_service_sid']
 wSpace_sid  = ENV['twilio_workspace_sid']
 wFlow_sid   = ENV['twilio_workflow_sid']
 
-client = Twilio::REST::Client.new(account_sid, auth_token)
+client = Twilio::REST::Client.new account_sid, auth_token
 #trClient = Twilio::REST::Client.new(account_sid, auth_token, wSpace_sid)
 
 get '/' do
@@ -27,7 +27,7 @@ get '/' do
         client_name = default_client
     end
 
-    capability = Twilio::Util::Capability.new account_sid, auth_token
+    capability = Twilio::JWT::Capability.new(account_sid, auth_token)
     # Create an application sid at twilio.com/user/account/apps and use it here/above
     capability.allow_client_outgoing appsid
     capability.allow_client_incoming client_name
@@ -44,14 +44,19 @@ get '/token' do
   # Create a unique ID for the currently connecting device
   endpoint_id = "TwilioDemoApp:#{identity}:#{device_id}"
   # Create an Access Token for the app
-  token = Twilio::Util::AccessToken.new account_sid, api_key, api_secret, 3600, identity
+  token = Twilio::JWT::AccessToken.new(account_sid, api_key, api_secret, 3600, identity)
+
   token.identity = identity
   # Create app grant for out token
-  grant = Twilio::Util::AccessToken::SyncGrant.new
+  grant = Twilio::JWT::AccessToken::SyncGrant.new
   grant.service_sid = sync_sid
   grant.endpoint_id = endpoint_id
-  token.add_grant grant
-  # Generate the token and send to the client
+  token.add_grant(grant)
+
+  # Generate the token # is this from 4.x ???
+  #puts token.to_jwt
+
+  # # Generate the token and send to the client
   json :identity => identity, :token => token.to_jwt
 end
 

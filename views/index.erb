@@ -52,15 +52,25 @@
       accessManager = new Twilio.AccessManager(tokenResponse.token);
       syncClient = new Twilio.Sync.Client(accessManager);
 
+      // Testing Doc Setup
+      syncClient.document('user_prefs').then(function(doc) {
+          doc.set({
+              foregroundColor: "#ffff00",
+              backgroundColor: "#ff0000"
+          });
+          console.log("executed doc set");
+          console.log(doc.get());
+      });
+
       // Create and/or open a Sync document
       syncClient.document('TwilioChannel').then(function(doc)
       {
-        doc.on("updated", function(data)
-        {
-          syncDoc = doc;
-          data = syncDoc.get();
-          buildCaller(callerProfile, data);
+        doc.set({
+            syncDoc : doc,
+            data : {}
         });
+        console.log(doc.get());
+        //buildCaller(callerProfile, data)
       });
     });
 
