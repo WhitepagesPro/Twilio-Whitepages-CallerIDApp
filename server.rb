@@ -1,7 +1,6 @@
+require_relative 'twilio-ruby/lib/twilio-ruby.rb'
 require 'sinatra'
 require 'sinatra/json'
-require 'twilio-ruby'
-require 'json'
 
 disable :protection
 
@@ -15,12 +14,7 @@ appsid      = ENV['twilio_app_id']
 api_key     = ENV['twilio_api_key']
 api_secret  = ENV['twilio_api_secret']
 sync_sid    = ENV['twilio_sync_service_sid']
-wSpace_sid  = ENV['twilio_workspace_sid']
-wFlow_sid   = ENV['twilio_workflow_sid']
-activ_sid   = ENV['twilio_activity_sid']
 
-
-#trClient = Twilio::REST::Client.new(account_sid, auth_token, wSpace_sid)
 
 get '/' do
     client_name = params[:client]
@@ -28,7 +22,7 @@ get '/' do
         client_name = default_client
     end
 
-    capability = Twilio::JWT::Capability.new(account_sid, auth_token)
+    capability = Twilio::Util::Capability.new account_sid, auth_token
     # Create an application sid at twilio.com/user/account/apps and use it here/above
     capability.allow_client_outgoing appsid
     capability.allow_client_incoming client_name
@@ -45,46 +39,54 @@ get '/token' do
   # Create a unique ID for the currently connecting device
   endpoint_id = "TwilioDemoApp:#{identity}:#{device_id}"
   # Create an Access Token for the app
-  token = Twilio::JWT::AccessToken.new(account_sid, api_key, api_secret, 3600, identity)
-
+  token = Twilio::Util::AccessToken.new account_sid, api_key, api_secret, 3600, identity
   token.identity = identity
   # Create app grant for out token
-  grant = Twilio::JWT::AccessToken::SyncGrant.new
+  grant = Twilio::Util::AccessToken::SyncGrant.new
   grant.service_sid = sync_sid
   grant.endpoint_id = endpoint_id
-  token.add_grant(grant)
+  token.add_grant grant
 
-  # Generate the token # is this from 4.x ???
-  #puts token.to_jwt
-
-  # # Generate the token and send to the client
+  # Generate the token and send to the client
   json :identity => identity, :token => token.to_jwt
+end
+
+post '/dial' do
+    #determine if call is inbound
+    number = params[:PhoneNumber]
+
+    response = Twilio::TwiML::Response.new do |r|
+        # Should be your Twilio Number or a verified Caller ID
+        r.Dial :callerId => caller_id do |d|
+            # Test to see if the PhoneNumber is a number, or a Client ID. In
+            # this case, we detect a Client ID by the presence of non-numbers
+            # in the PhoneNumber parameter.
+            if /^[\d\+\-\(\) ]+$/.match(number)
+                d.Number(CGI::escapeHTML number)
+            else
+                d.Client number
+            end
+        end
+    end
+    response.text
 end
 
 #this will be called from a Twilio voice URL
 #for inbound calls, dial the default_client
 post '/inbound' do
+
     from = params[:From]
     addOnData = params[:AddOns]
-    client = Twilio::REST::Client.new account_sid, auth_token
+    client = Twilio::REST::Client.new(account_sid, auth_token)
     # Sending the add on data through Twilio Sync
     service = client.preview.sync.services(sync_sid)
-    service.documents("TwilioChannel").update(data: addOnData)
+    response = service.documents("TwilioChannel").update(data: addOnData)
     # Dials the default_client
-    Twilio::TwiML::Response.new do |r|
-        r.Say("Spam Beware, please wait for the next available agent ")
-        # Queue task with TaskRouter
-        r.Enqueue :workflowSid => wFlow_sid
+    response2 = Twilio::TwiML::Response.new do |r|
         # Should be your Twilio Number or a verified Caller ID
-       r.Dial :callerId => from do |d|
-          d.Client default_client
-       end
-    end.text
-end
-
-post '/assignment_callback' do
-  # Respond to assignment callbacks with accept instruction
-  content_type :json
-  # from must be a verified phone number from your twilio account
-  {"instruction" => "dequeue", "from" => caller_id, "post_work_activity_sid" => activ_sid}.to_json
+        r.Dial :callerId => from do |d|
+            d.Client default_client
+        end
+    end
+    response2.text
 end
